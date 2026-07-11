@@ -1,9 +1,9 @@
 from airflow.sdk import dag, task
-
+import os
 @dag(
-  dag_id="first_dag"
+  dag_id="second_orchestrator_dag"
 )
-def first_dag():
+def second_orchestrator_dag():
 
   @task.python
   def first_task():
@@ -15,7 +15,10 @@ def first_dag():
     
   @task.python
   def third_task():
-      print("This is the third task")
+      os.makedirs(os.path.dirname("/opt/airflow/logs/data"), exist_ok=True)
+
+      with open("/opt/airflow/logs/data/output_2.txt", 'w') as f:
+          f.write(f"Data processed successfully")
 
   #Defining task dependencies
   first = first_task()
@@ -24,4 +27,4 @@ def first_dag():
 
   first >> second >> third
 
-first_dag()
+second_orchestrator_dag()
